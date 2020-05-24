@@ -1,0 +1,95 @@
+#include <Servo.h>
+#include <LiquidCrystal.h>
+#include <Wire.h>
+
+const int rs = 12, en = 11, d4 = 5, d5 = 4, d6 = 3, d7 = 2;
+LiquidCrystal lcd(rs, en, d4, d5, d6, d7);
+int trigPin = 6;
+int echoPin = 7;
+Servo servo;
+Servo servo1;
+int a = 0;
+const int buzzer = 1; //buzzer to arduino pin 9
+int redPin = 13;
+int greenPin = 10;
+int bluePin = 0;
+
+void setup() {
+pinMode(trigPin, OUTPUT);
+pinMode(echoPin, INPUT);
+servo.attach(8);
+servo1.attach(9);
+lcd.begin(16,2);
+pinMode(buzzer, OUTPUT); // Set buzzer - pin 9 as an output
+pinMode(redPin, OUTPUT);
+pinMode(greenPin, OUTPUT);
+pinMode(bluePin, OUTPUT);
+
+}
+
+void loop() {
+long duration, distance;
+digitalWrite(trigPin, LOW);
+delayMicroseconds(5);
+digitalWrite(trigPin, HIGH);
+delayMicroseconds(10);
+digitalWrite(trigPin,LOW);
+duration = pulseIn(echoPin, HIGH);
+distance = (duration/2)/29.1;
+if (distance <= 20){
+  a == 1;
+  setColor(255, 255, 255); // White Color
+  servo.write(90);
+  delay(4000);
+  servo.write(0);
+  delay(2000);
+  servo1.write(180);
+  delay(4000);
+  servo1.write(0);
+  delay(1000);
+    setColor(0, 255, 0); // Green Color
+    lcd.clear();                      //Pulisce display
+
+    for (int i = 20; i>=0 ; i--){     //Conteggio da 10 a 0
+      
+      setColor(255, 0, 0); // Red Color
+      lcd.setCursor (5,0);            // secod write set
+      lcd.print ("seconds");          // secod write 
+      lcd.setCursor(0,1);             // be healthly write set
+      lcd.print("Stay Healthy :)");    // be healthly write 
+      lcd.setCursor (2, 0);           //Colonna 0 - riga 0 del display
+      lcd.print (i);                  //Stampa sul display conto alla rovescia
+      delay (1000);                   //Pausa
+
+
+      lcd.clear();
+    }
+    tone(buzzer, 1000); // Send 1KHz sound signal...
+    delay(1000);        // ...for 1 sec
+    noTone(buzzer);     // Stop sound...
+    delay(1000);        // ...for 1sec
+    setColor(0, 0, 255); // Blue Color
+    lcd.setCursor(3,0);
+    lcd.print ("You Can");
+    lcd.setCursor(5,1);
+    lcd.print("wash");
+    digitalWrite (13, LOW);           //LED OFF
+    servo1.write (180);
+    delay(10000);
+    servo1.write(0);
+   
+  }
+  else{
+  lcd.setCursor(0,0);
+  lcd.print("Hello Abdulhamid");
+  lcd.setCursor(2,1);
+  lcd.print("Stay Healthy");
+  setColor(0, 255, 0); // Green Color
+  
+}
+    }
+void setColor(int redValue, int greenValue, int blueValue) {
+  analogWrite(redPin, redValue);
+  analogWrite(greenPin, greenValue);
+  analogWrite(bluePin, blueValue);
+}
